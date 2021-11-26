@@ -55,8 +55,6 @@ RUN apk add --update libzip-dev curl-dev &&\
     rm -rf /var/cache/apk/* \
 
 ARG PHP_API_VERSION="20200930"
-COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
-COPY --from=ext-inotify /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini
 COPY --from=ext-redis /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so
 COPY --from=ext-redis /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/docker-php-ext-redis.ini
 COPY --from=ext-bcmath /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/bcmath.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/bcmath.so
