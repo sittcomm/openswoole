@@ -42,13 +42,13 @@ RUN docker-php-ext-install opcache
 
 FROM php-base as app-base
 
-COPY ./docker/conf.d/symfony-prod.ini $PHP_INI_DIR/conf.d/
+COPY ./docker/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/
 
 WORKDIR /app
 
 RUN set -exu; \
   ln -sf $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini; \
-  ln -sf $PHP_INI_DIR/conf.d/symfony-prod.ini $PHP_INI_DIR/conf.d/symfony.ini; \
+  ln -sf $PHP_INI_DIR/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini; \
 
 RUN apk add --update libzip-dev curl-dev &&\
     docker-php-ext-install curl && \
@@ -84,11 +84,11 @@ ENTRYPOINT ["docker-entrypoint"]
 
 FROM app-base as app-base-dev
 
-COPY ./docker/conf.d/symfony-dev.ini $PHP_INI_DIR/conf.d/
+COPY ./docker/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/
 
 RUN set -exu; \
   ln -sf $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
-  ln -sf $PHP_INI_DIR/conf.d/symfony-dev.ini $PHP_INI_DIR/conf.d/symfony.ini;
+  ln -sf $PHP_INI_DIR/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/symfony.ini;
 
 ARG PHP_API_VERSION="20200930"
 COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
