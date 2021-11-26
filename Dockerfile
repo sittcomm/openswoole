@@ -42,17 +42,20 @@ RUN docker-php-ext-install opcache
 
 FROM php-base as app-base
 
+COPY ./docker/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/
+
 WORKDIR /app
 
+RUN  ln -sf $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini;
+RUN  ln -sf $PHP_INI_DIR/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini;
 
 RUN apk add --update libzip-dev curl-dev &&\
     docker-php-ext-install curl && \
     apk del gcc g++ &&\
-    rm -rf /var/cache/apk/* \
+    rm -rf /var/cache/apk/*
+
 
 ARG PHP_API_VERSION="20200930"
-COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
-COPY --from=ext-inotify /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini
 COPY --from=ext-redis /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so
 COPY --from=ext-redis /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/docker-php-ext-redis.ini
 COPY --from=ext-bcmath /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/bcmath.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/bcmath.so
@@ -65,8 +68,8 @@ COPY --from=ext-pdo /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini /usr/
 COPY --from=ext-opcache /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/opcache.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/opcache.so
 COPY --from=ext-opcache /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
-COPY ./docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-COPY ./docker/php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
+COPY ./docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY ./docker/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
 RUN chmod +x /usr/local/bin/docker-entrypoint /usr/local/bin/docker-healthcheck
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -78,6 +81,12 @@ ENTRYPOINT ["docker-entrypoint"]
 
 
 FROM app-base as app-base-dev
+
+COPY ./docker/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/
+
+RUN  ln -sf $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini;
+RUN  ln -sf $PHP_INI_DIR/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/symfony.ini;
+
 ARG PHP_API_VERSION="20200930"
 COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
 COPY --from=ext-inotify /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini
