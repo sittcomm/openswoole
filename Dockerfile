@@ -42,6 +42,8 @@ RUN docker-php-ext-install opcache
 
 FROM php-base as app-base
 
+COPY ./docker/conf.d/symfony-prod.ini $PHP_INI_DIR/conf.d/
+
 WORKDIR /app
 
 RUN set -exu; \
@@ -82,7 +84,7 @@ ENTRYPOINT ["docker-entrypoint"]
 
 FROM app-base as app-base-dev
 
-COPY /docker/conf.d/symfony-dev.ini $PHP_INI_DIR/conf.d/
+COPY ./docker/conf.d/symfony-dev.ini $PHP_INI_DIR/conf.d/
 
 RUN set -exu; \
   ln -sf $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
