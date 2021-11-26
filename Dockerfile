@@ -52,7 +52,8 @@ RUN  ln -sf $PHP_INI_DIR/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini
 RUN apk add --update libzip-dev curl-dev &&\
     docker-php-ext-install curl && \
     apk del gcc g++ &&\
-    rm -rf /var/cache/apk/* \
+    rm -rf /var/cache/apk/*
+
 
 ARG PHP_API_VERSION="20200930"
 COPY --from=ext-redis /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/redis.so
@@ -86,6 +87,6 @@ COPY ./docker/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/
 RUN  ln -sf $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini;
 RUN  ln -sf $PHP_INI_DIR/conf.d/symfony.dev.ini $PHP_INI_DIR/conf.d/symfony.ini;
 
-#ARG PHP_API_VERSION="20200930"
-#COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
-#COPY --from=ext-inotify /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini
+ARG PHP_API_VERSION="20200930"
+COPY --from=ext-inotify /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so /usr/local/lib/php/extensions/no-debug-non-zts-${PHP_API_VERSION}/inotify.so
+COPY --from=ext-inotify /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini /usr/local/etc/php/conf.d/docker-php-ext-inotify.ini
